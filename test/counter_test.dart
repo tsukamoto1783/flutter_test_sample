@@ -1,18 +1,9 @@
 // Import the test package and Counter class
+import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_test_sample/counter.dart';
-import 'package:test/test.dart';
-
-// void main() {
-//   test('Counter value should be incremented', () {
-//     final counter = Counter();
-
-//     counter.increment();
-
-//     expect(counter.value, 1);
-//   });
-// }
 
 void main() {
+  // 公式ドキュメントのテストコード
   group('Counter', () {
     test('value should start at 0', () {
       expect(Counter().value, 0);
