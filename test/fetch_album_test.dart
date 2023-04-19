@@ -6,27 +6,32 @@ import 'package:mockito/mockito.dart';
 
 import 'fetch_album_test.mocks.dart';
 
-// Generate a MockClient using the Mockito package.
-// Create new instances of this class in each test.
+// Mockitoパッケージを使用して、MockClientを自動生成する。
 @GenerateMocks([http.Client])
 void main() {
   group('fetchAlbum', () {
     test('httpの呼出が正常に成功した場合、取得データを返却する', () async {
+      // MockClientインスタンスの作成(モックオブジェクト)
       final client = MockClient();
 
-      // 提供されたhttp.Clientを呼び出すと、成功したレスポンスを返すようにMockitoを使用
+      // client.getが呼び出されたときに、成功したレスポンスを返すように設定。
+      // clientは、http.Clientをモックした、MockClientインスタンスであるため、
+      // .getをしても実際のAPIアクセスは行わず、デフォルトだとnullを返す。
+      // そこで、when().thenAnswer()で、指定の戻り値を返すように設定する。（スタブ化）
       when(client
               .get(Uri.parse('https://jsonplaceholder.typicode.com/albums/1')))
           .thenAnswer((_) async =>
               http.Response('{"userId": 1, "id": 2, "title": "mock"}', 200));
 
+      // fetchAlbum関数を実行し、戻り値がAlbum型のインスタンスであることを確認する
+      // fetchAlbum関数内の、client.get部分は、先ほど振る舞いを指定した通りとなる。
       expect(await fetchAlbum(client), isA<Album>());
     });
 
-    test('throws an exception if the http call completes with an error', () {
+    test('httpの呼び出しがエラーで完了した場合、例外を投げる', () {
       final client = MockClient();
 
-      // Use Mockito to return an unsuccessful response when it calls the provided http.Client.
+      // MockClientインスタンスを使用し、.getをすると失敗したレスポンスを返すように設定。
       when(client
               .get(Uri.parse('https://jsonplaceholder.typicode.com/albums/1')))
           .thenAnswer((_) async => http.Response('Not Found', 404));
